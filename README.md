@@ -6,7 +6,7 @@
 
 ---
 
-## 1. Motivation & Research Question
+## 1. Motivation & Research Question🍀
 
 Mixture-of-Experts (MoE) is very popular in large language models:  
 only a subset of experts is activated for each token, saving computation while improving performance.
@@ -17,7 +17,7 @@ But for **time-series forecasting**, especially in **finance**, it is not clear 
   - **stable / structured** series (e.g. electricity load, ETTh1), and  
   - **highly volatile, non-stationary** series (e.g. Bitcoin prices).
 
-**🍀My research question is:**
+**My research question is:**
 
 > 🔍 *Does the best forecasting model depend on the volatility regime?*  
 > If so, can we design a **volatility-aware MoE** that automatically adjusts model complexity to the asset’s volatility?
@@ -34,22 +34,7 @@ This repository contains:
 
 ---
 
-## 2. Project Overview
-
-### 2.1 What I have done so far
-
-- Implemented / adapted a **Time-MoE** architecture in PyTorch.
-- Built a shared pipeline to:
-  - load and preprocess time-series data (`dataset/`)
-  - create sliding windows for multi-step forecasting
-  - train models with a unified script (`main.py`)
-  - evaluate and plot predictions (`eval_etth1.py`, `run_eval.py`).
-- Ran experiments on:
-  - **ETTh1** (electricity transformer temperature)
-  - **S&P 500 index**
-  - **Bitcoin price**
-
-### 🔍2.2 Key empirical observation
+## 2. Key empirical observation🔍
 
 - On **ETTh1** (periodic, structured, moderate volatility):  
   Time-MoE matches or slightly outperforms LSTM.  
@@ -66,7 +51,7 @@ This leads to the new hypothesis:
 
 ---
 
-## 3. Volatility-Aware MoE (Planned Extension)
+## 3. Volatility-Aware MoE🔑
 
 To respond to the failure on Bitcoin, I propose a **volatility-aware MoE**:
 
@@ -100,7 +85,7 @@ A simple version could be:
 
 ---
 
-## 4. Repository Structure
+## 4. Repository Structure📒
 
 The current structure (simplified) looks like this:
 
@@ -130,3 +115,107 @@ The current structure (simplified) looks like this:
 ├── requirements.txt      # Python dependencies
 ├── LICENSE
 └── README.md             # You are here :)
+```
+---
+
+## 5.Data🔢
+
+Put your data under `dataset`.
+
+- JSONL (one JSON per line), used in `eval_etth1.py`:
+
+  ```json
+  {"sequence": [1.0, 1.1, 1.2, ...]}
+  {"sequence": [0.9, 1.0, 1.05, ...]}
+- CSV price series that you can preprocess into JSON sequences.
+
+You can adapt the `load_jsonl` function in `eval_etth1.py` to other formats.
+
+## 6. Formulas behind👀
+
+Given a past window $x_{1:T}$, predict the next $H$ steps $x_{T+1:T+H}$.
+
+The loss is multi-step MSE:
+
+$$
+L = \frac{1}{H} \sum_{h=1}^{H} \big(\hat{x}_{T+h} - x_{T+h}\big)^2.
+$$
+
+For a hidden representation $h$:
+
+- Each expert $f_k$ produces an output $e_k = f_k(h), \; k = 1, \ldots, M$.
+- A router outputs mixture weights $\pi_k(h)$ (sum to 1).
+- The final output is:
+
+$$
+\hat{y} = \sum_{k=1}^{M} \pi_k(h) e_k.
+$$
+
+## 7. Installation🔧
+```bash
+git clone https://github.com/<your-username>/Time-MoE.git
+cd Time-MoE
+
+# (Optional) virtual environment
+# python -m venv .venv
+# source .venv/bin/activate  # Linux / macOS
+# .venv\Scripts\activate     # Windows
+
+pip install -r requirements.txt
+```
+## 8. Usage🍴
+
+### 8.1 Training Time-MoE
+
+Run `python main.py --help` to see all options.
+
+Example (ETTh1):
+
+```bash
+python main.py \
+    --dataset_path dataset/etth1_train.jsonl \
+    --config_path time_moe/config.json \
+    --output_dir time_moe_etth1
+```
+### 8.2 Evaluation on ETTh1
+```bash
+python eval_etth1.py \
+    --model_dir time_moe_etth1 \
+    --test_path dataset/etth1_test.jsonl \
+    --save_fig figures/etth1_eval.png
+```
+This will:
+
+- load the test sequences,
+- build sliding windows,
+- run the model,
+- plot prediction vs. ground truth into figures/etth1_eval.png.
+
+### 8.3 Evaluation on BTC / S&P
+```bash
+python run_eval.py \
+    --model_dir time_moe_btc \
+    --test_path dataset/btc_test.jsonl \
+    --save_fig figures/btc_eval.png
+```
+### 9. Results🍵
+### 9.1 ETTh1 (Electricity)
+
+- Time-MoE achieves competitive or slightly better MSE/MAE than LSTM.
+
+- Visual plots show that Time-MoE tracks the seasonal pattern reasonably well.
+
+### 9.2 Finance (S&P vs Bitcoin)
+
+- On **S&P 500 index** (moderate volatility), Time-MoE is at best similar to LSTM.
+- On **Bitcoin** (ultra-high volatility), Time-MoE:
+  - produces **over-smoothed** forecasts,
+  - leads to **very large MSE**, much worse than LSTM.
+
+This contrast is what motivates the **volatility-aware MoE** design.
+
+Figures like `btc_eval.png` and `etth1_eval.png` illustrate these behaviors.
+
+
+
+
