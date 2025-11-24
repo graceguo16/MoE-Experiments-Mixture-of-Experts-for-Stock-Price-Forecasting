@@ -6,10 +6,10 @@
 
 ---
 
-## 1. Motivation & Research Question🍀
+## 1. Motivation & Research Question
 
 Mixture-of-Experts (MoE) is very popular in large language models:  
-only a subset of experts is activated for each token, saving computation while improving performance.
+Sparse MoE layers are used instead of dense feed-forward network (FFN) layers, saving computation while improving performance.
 
 But for **time-series forecasting**, especially in **finance**, it is not clear that:
 
@@ -34,7 +34,7 @@ This repository contains:
 
 ---
 
-## 2. Key empirical observation🔍
+## 2. Key empirical observation
 
 - On **ETTh1** (periodic, structured, moderate volatility):  
   Time-MoE matches or slightly outperforms LSTM.  
@@ -51,7 +51,7 @@ This leads to the new hypothesis:
 
 ---
 
-## 3. Volatility-Aware MoE🔑
+## 3. Volatility-Aware MoE
 
 To respond to the failure on Bitcoin, I propose a **volatility-aware MoE**:
 
@@ -68,12 +68,12 @@ A simple version could be:
 
 3. Use a **mixture of two experts**:
 
-   - Expert 1: Linear model / AR (LM)  
+   - Expert 1: Linear model
    - Expert 2: LSTM (RNN)
 
-4. Static mixture weights (example):
+4. Static mixture weights:
 
-   - For high-volatility assets/segments:  
+   - For high-volatility assets:  
      - w_RNN = 0.7, w_LM = 0.3  
    - For stable assets/segments:  
      - w_RNN = 0.3, w_LM = 0.7  
@@ -85,9 +85,8 @@ A simple version could be:
 
 ---
 
-## 4. Repository Structure📒
+## 4. Repository Structure
 
-The current structure (simplified) looks like this:
 
 ```text
 .
@@ -116,9 +115,7 @@ The current structure (simplified) looks like this:
 ```
 ---
 
-## 5.Data🔢
-
-Put your data under `dataset`.
+## 5.Data
 
 - JSONL (one JSON per line), used in `eval_etth1.py`:
 
@@ -149,7 +146,7 @@ $$
 \hat{y} = \sum_{k=1}^{M} \pi_k(h) e_k.
 $$
 
-## 7. Installation🔧
+## 7. Installation
 ```bash
 git clone https://github.com/<your-username>/Time-MoE.git
 cd Time-MoE
@@ -161,7 +158,7 @@ cd Time-MoE
 
 pip install -r requirements.txt
 ```
-## 8. Usage🍴
+## 8. Usage
 
 ### 8.1 Training Time-MoE
 
@@ -196,7 +193,7 @@ python run_eval.py \
     --test_path dataset/btc_test.jsonl \
     --save_fig figures/btc_eval.png
 ```
-### 9. Results🍵
+### 9. Results
 ### 9.1 ETTh1 (Electricity)
 
 - Time-MoE achieves competitive or slightly better MSE/MAE than LSTM.
