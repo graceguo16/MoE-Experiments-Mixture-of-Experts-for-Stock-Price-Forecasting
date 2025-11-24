@@ -93,8 +93,6 @@ The current structure (simplified) looks like this:
 .
 ├── dataset/              # Preprocessed time-series data (ETTh1, S&P, Bitcoin, etc.)
 ├── figures/              # Saved plots
-│   ├── btc_eval.png      # Example: BTC predictions
-│   └── etth1_eval.png    # Example: ETTh1 predictions
 ├── logs/                 # Training / evaluation logs
 ├── time_moe/             # Time-MoE checkpoints & configs (generic)
 │   ├── btc_cpu_e3/       # Example: BTC run
