@@ -1,4 +1,4 @@
-# MoE-Experiments-Mixture-of-Experts-for-Stock-Price-Forecasting
+# MoE Experiments: Mixture of Experts for Stock Price Forecasting
 
 > **Core question**  
 > I want to understand whether the **optimal time-series forecasting model depends on the volatility regime**.  
@@ -17,7 +17,7 @@ But for **time-series forecasting**, especially in **finance**, it is not clear 
   - **stable / structured** series (e.g. electricity load, ETTh1), and  
   - **highly volatile, non-stationary** series (e.g. Bitcoin prices).
 
-**My research question is:**
+**🍀My research question is:**
 
 > 🔍 *Does the best forecasting model depend on the volatility regime?*  
 > If so, can we design a **volatility-aware MoE** that automatically adjusts model complexity to the asset’s volatility?
@@ -49,7 +49,7 @@ This repository contains:
   - **S&P 500 index**
   - **Bitcoin price**
 
-### 2.2 Key empirical observation
+### 🔍2.2 Key empirical observation
 
 - On **ETTh1** (periodic, structured, moderate volatility):  
   Time-MoE matches or slightly outperforms LSTM.  
